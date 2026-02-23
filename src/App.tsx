@@ -1,11 +1,15 @@
 // src/App.tsx
-import React, { useState } from 'react';
+import { useState } from 'react';
  
 // Data
 import { stocks, trades } from './data/stockData';
  
 // Types
 import type { Stock, Trade }   from './types/stock.types';
+
+import {  holdings } from './data/stockData';
+import type { Holding } from './types/stock.types';
+
  
 // Components
 import StockCard          from './components/StockCard';
@@ -112,6 +116,28 @@ function App() {
         onSubmitTrade={handleNewTrade}
         initialValues={selectedStock ?? {}}
       />
+
+      <h2 style={{ color: '#1E40AF' }}>Holdings</h2>
+<DataTable<Holding>
+  data={holdings}
+  rowKey='id'
+  columns={[
+    { key: 'symbol',        header: 'Symbol',         },
+    { key: 'qty',           header: 'Qty',         },
+    { key: 'investedValue', header: 'Invested Value',
+      render: v => `$${Number(v).toLocaleString()}` },
+    { key: 'currentValue',  header: 'Current Value',
+      render: v => `$${Number(v).toLocaleString()}` },
+    { key: 'totalReturn',   header: 'Total Return',
+      render: v => {
+        const n = Number(v);
+        return <span style={{ color: n >= 0 ? '#166534' : '#991B1B', fontWeight: 'bold' }}>
+          {n >= 0 ? '+' : ''}${n.toFixed(2)}
+        </span>;
+      }},
+  ]}
+/>
+
     </div>
   );
 }
