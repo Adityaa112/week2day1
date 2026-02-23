@@ -122,7 +122,7 @@ function App() {
       />
 
       {/* POSITIONS TABLE - Full sorting logic applied here */}
-      <h2 style={{ color: '#1E40AF' }}>Positions</h2>
+      <h2 style={{ color: '#1E40AA' }}>Positions</h2>
       <DataTable<Position>
         data={positions}
         rowKey='id'
