@@ -2,13 +2,14 @@
 import { useState } from 'react';
  
 // Data
-import { stocks, trades } from './data/stockData';
+
  
 // Types
-import type { Stock, Trade }   from './types/stock.types';
+import type { Position, Stock, Trade }   from './types/stock.types';
 
 import {  holdings } from './data/stockData';
 import type { Holding } from './types/stock.types';
+import{ positions, stocks, trades } from './data/stockData';
 
  
 // Components
@@ -135,6 +136,28 @@ function App() {
           {n >= 0 ? '+' : ''}${n.toFixed(2)}
         </span>;
       }},
+  ]}
+/>
+      <h2 style={{ color: '#1E40AF' }}>Positions</h2>
+<DataTable<Position>
+  data={positions}
+  rowKey='id'
+  columns={[
+    { key: 'symbol',   header: 'Symbol' },
+    { key: 'qty',      header: 'Qty' },
+    { key: 'avgPrice', header: 'Avg Price',
+      render: v => `$${Number(v).toFixed(2)}` },
+    { key: 'ltp',      header: 'LTP',
+      render: v => `$${Number(v).toFixed(2)}` },
+    { key: 'pnl',      header: 'P&L',
+      render: v => {
+        const n = Number(v);
+        return <span style={{ color: n >= 0 ? '#166534' : '#991B1B', fontWeight: 'bold' }}>
+          {n >= 0 ? '+' : ''}${n.toFixed(2)}
+        </span>;
+      } },
+    { key: 'pnlPct',   header: 'P&L %',
+      render: v => `${Number(v).toFixed(2)}%` },
   ]}
 />
 
