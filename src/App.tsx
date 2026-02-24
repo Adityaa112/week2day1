@@ -13,6 +13,7 @@ import SearchBar from './components/SearchBar';
 import DataTable from './components/DataTable';
 import TradeForm from './components/TradeForm';
 import TradeFeature from './features/trades/TradeFeature'; // NEW
+import LiveQuotesFeature from './features/quotes/LiveQuotesFeature'; // NEW
 
 function App() {
   const [selectedStock, setSelectedStock] = useState<Stock | null>(null);
@@ -61,28 +62,13 @@ function App() {
 
       <PortfolioSummary availableStocks={stocks} />
 
-      {/* Live Quotes Table - Sorting enabled on Price and Change */}
-      <h2 style={{ color: '#1E40AF' }}>Live Quotes</h2>
-      <DataTable<Stock>
-        data={filteredStocks}
-        rowKey='id'
-        onRowClick={setSelectedStock}
-        emptyMessage='No stocks match your search.'
-        columns={[
-          { key: 'symbol', header: 'Symbol', sortable: true },
-          { key: 'name', header: 'Company', sortable: true },
-          { key: 'price', header: 'Price', sortable: true,
-            render: v => `$${Number(v).toFixed(2)}` },
-          { key: 'changePct', header: 'Change %', sortable: true,
-            render: v => {
-              const n = Number(v);
-              return <span style={{ color: n >= 0 ? 'green' : 'red' }}>
-                {n >= 0 ? '+' : ''}{n.toFixed(2)}%
-              </span>;
-            }},
-          { key: 'volume', header: 'Volume', sortable: true,
-            render: v => Number(v).toLocaleString() },
-        ]}
+      {/* Live Quotes Feature with Virtual List */}
+      <LiveQuotesFeature
+        stocks={filteredStocks}
+        selectedStock={selectedStock}
+        onSelectStock={setSelectedStock}
+        onSearch={setSearchQuery}
+        onFilterChange={setSectorFilter}
       />
 
       {/* Trade History Feature with Infinite Scroll */}
