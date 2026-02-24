@@ -30,6 +30,37 @@ export const stocks: Stock[] = [
         price: 196.40, change: 1.05, changePct: 0.54,
         volume: 8_900_000, marketCap: 568_000_000_000, sector: 'Finance'
     },
+    // Duplicated stocks for virtualization demo
+    ...Array.from({ length: 45 }, (_, i) => {
+        const base = [
+            {
+                name: 'Apple Inc.', price: 189.30, change: 2.15, changePct: 1.15,
+                volume: 54_200_000, marketCap: 2_950_000_000_000, sector: 'Technology'
+            },
+            {
+                name: 'Alphabet Inc.', price: 141.80, change: -0.95, changePct: -0.67,
+                volume: 22_300_000, marketCap: 1_770_000_000_000, sector: 'Technology'
+            },
+            {
+                name: 'Microsoft Corp.', price: 378.90, change: 4.20, changePct: 1.12,
+                volume: 19_600_000, marketCap: 2_810_000_000_000, sector: 'Technology'
+            },
+            {
+                name: 'Tesla Inc.', price: 248.50, change: -7.30, changePct: -2.85,
+                volume: 98_700_000, marketCap: 791_000_000_000, sector: 'Automotive'
+            },
+            {
+                name: 'JPMorgan Chase', price: 196.40, change: 1.05, changePct: 0.54,
+                volume: 8_900_000, marketCap: 568_000_000_000, sector: 'Finance'
+            }
+        ];
+        const idx = i % 5;
+        return {
+            id: `stock${6 + i}`,
+            symbol: `${['AAPL', 'GOOGL', 'MSFT', 'TSLA', 'JPM'][idx]}${2 + Math.floor(i / 5)}`,
+            ...base[idx]
+        };
+    })
 ];
 
 export const trades: Trade[] = [
