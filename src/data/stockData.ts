@@ -45,6 +45,21 @@ export const trades: Trade[] = [
         id: 't3', stockId: '4', symbol: 'TSLA', type: 'SELL',
         quantity: 8, price: 265.00, date: '2024-03-10'
     },
+    { id: 't4', stockId: '2', symbol: 'GOOGL', type: 'BUY', quantity: 12, price: 140.00, date: '2024-01-18' },
+    { id: 't5', stockId: '5', symbol: 'JPM', type: 'SELL', quantity: 7, price: 195.00, date: '2024-01-22' },
+    { id: 't6', stockId: '1', symbol: 'AAPL', type: 'SELL', quantity: 4, price: 180.00, date: '2024-02-01' },
+    { id: 't7', stockId: '3', symbol: 'MSFT', type: 'BUY', quantity: 3, price: 370.00, date: '2024-02-05' },
+    { id: 't8', stockId: '4', symbol: 'TSLA', type: 'BUY', quantity: 6, price: 250.00, date: '2024-02-10' },
+    { id: 't9', stockId: '2', symbol: 'GOOGL', type: 'SELL', quantity: 5, price: 142.00, date: '2024-02-15' },
+    { id: 't10', stockId: '5', symbol: 'JPM', type: 'BUY', quantity: 10, price: 192.00, date: '2024-02-18' },
+    { id: 't11', stockId: '1', symbol: 'AAPL', type: 'BUY', quantity: 8, price: 176.00, date: '2024-02-22' },
+    { id: 't12', stockId: '3', symbol: 'MSFT', type: 'SELL', quantity: 2, price: 375.00, date: '2024-02-25' },
+    { id: 't13', stockId: '4', symbol: 'TSLA', type: 'SELL', quantity: 7, price: 255.00, date: '2024-03-01' },
+    { id: 't14', stockId: '2', symbol: 'GOOGL', type: 'BUY', quantity: 9, price: 143.00, date: '2024-03-05' },
+    { id: 't15', stockId: '5', symbol: 'JPM', type: 'SELL', quantity: 6, price: 194.00, date: '2024-03-08' },
+    { id: 't16', stockId: '1', symbol: 'AAPL', type: 'SELL', quantity: 5, price: 182.00, date: '2024-03-12' },
+    { id: 't17', stockId: '3', symbol: 'MSFT', type: 'BUY', quantity: 4, price: 365.00, date: '2024-03-15' },
+    { id: 't18', stockId: '4', symbol: 'TSLA', type: 'BUY', quantity: 10, price: 249.00, date: '2024-03-18' },
 ];
 
 export const holdings: Holding[] = [

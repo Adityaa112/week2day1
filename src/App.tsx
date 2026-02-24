@@ -12,6 +12,7 @@ import PortfolioSummary from './components/PortfolioSummary';
 import SearchBar from './components/SearchBar';
 import DataTable from './components/DataTable';
 import TradeForm from './components/TradeForm';
+import TradeFeature from './features/trades/TradeFeature'; // NEW
 
 function App() {
   const [selectedStock, setSelectedStock] = useState<Stock | null>(null);
@@ -84,20 +85,12 @@ function App() {
         ]}
       />
 
-      {/* Trade History Table */}
-      <h2 style={{ color: '#1E40AF' }}>Trade History</h2>
-      <DataTable<Trade>
-        data={tradeHistory}
-        rowKey='id'
-        columns={[
-          { key: 'symbol', header: 'Symbol', sortable: true },
-          { key: 'type', header: 'Type', sortable: true,
-            render: v => <strong style={{ color: v === 'BUY' ? 'green' : 'red' }}>{String(v)}</strong> },
-          { key: 'quantity', header: 'Qty', sortable: true },
-          { key: 'price', header: 'Price', sortable: true,
-            render: v => `$${Number(v).toFixed(2)}` },
-          { key: 'date', header: 'Date', sortable: true },
-        ]}
+      {/* Trade History Feature with Infinite Scroll */}
+      <TradeFeature
+        tradeHistory={tradeHistory}
+        stocks={stocks}
+        selectedStock={selectedStock}
+        onSubmitTrade={handleNewTrade}
       />
 
       <h2 style={{ color: '#1E40AF' }}>Holdings</h2>
