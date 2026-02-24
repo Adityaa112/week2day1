@@ -14,6 +14,7 @@ import DataTable from './components/DataTable';
 import TradeForm from './components/TradeForm';
 import TradeFeature from './features/trades/TradeFeature'; // NEW
 import LiveQuotesFeature from './features/quotes/LiveQuotesFeature'; // NEW
+import PositionsFeature from './features/positions/PositionsFeature'; // NEW
 
 function App() {
   const [selectedStock, setSelectedStock] = useState<Stock | null>(null);
@@ -101,41 +102,8 @@ function App() {
         ]}
       />
 
-      {/* POSITIONS TABLE - Full sorting logic applied here */}
-      <h2 style={{ color: '#1E40AA' }}>Positions</h2>
-      <DataTable<Position>
-        data={positions}
-        rowKey='id'
-        filterKey='symbol' // search input filters by symbol
-        columns={[
-          { key: 'symbol',   header: 'Symbol',    sortable: true },
-          { key: 'qty',      header: 'Qty',       sortable: true },
-          { key: 'avgPrice', header: 'Avg Price', sortable: true,
-            render: v => `$${Number(v).toFixed(2)}` },
-          { key: 'ltp',      header: 'LTP',       sortable: true,
-            render: v => `$${Number(v).toFixed(2)}` },
-          { key: 'pnl',      header: 'P&L',       sortable: true,
-            render: (v) => {
-              const n = Number(v);
-              return (
-                <span style={{ color: n >= 0 ? '#166534' : '#991B1B', fontWeight: 'bold' }}>
-                  {n >= 0 ? '+' : ''}${n.toFixed(2)}
-                </span>
-              );
-            }
-          },
-          { key: 'pnlPct',   header: 'P&L %',     sortable: true,
-            render: (v) => {
-              const n = Number(v);
-              return (
-                <span style={{ color: n >= 0 ? '#166534' : '#991B1B' }}>
-                  {n >= 0 ? '+' : ''}{n.toFixed(2)}%
-                </span>
-              );
-            }
-          },
-        ]}
-      />
+      {/* POSITIONS TABLE - Infinite Scroll Feature */}
+      <PositionsFeature />
 
       <h2 style={{ color: '#1E40AF' }}>New Trade</h2>
       <TradeForm

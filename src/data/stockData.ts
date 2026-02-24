@@ -142,4 +142,29 @@ export const positions: Position[] = [
         avgPrice: 192.00, ltp: 196.40,
         pnl: 88.00, pnlPct: 2.29
     },
+    // Dummy positions for infinite scroll demo
+    ...Array.from({ length: 30 }, (_, i) => {
+        const base = [
+            { symbol: 'AAPL', avgPrice: 175.00, ltp: 189.30 },
+            { symbol: 'MSFT', avgPrice: 360.00, ltp: 378.90 },
+            { symbol: 'TSLA', avgPrice: 265.00, ltp: 248.50 },
+            { symbol: 'GOOGL', avgPrice: 145.00, ltp: 141.80 },
+            { symbol: 'JPM', avgPrice: 192.00, ltp: 196.40 }
+        ];
+        const idx = i % 5;
+        const qty = 5 + (i % 10);
+        const avgPrice = base[idx].avgPrice + (i % 3) * 2;
+        const ltp = base[idx].ltp + ((i % 4) - 2) * 1.5;
+        const pnl = (ltp - avgPrice) * qty;
+        const pnlPct = ((ltp - avgPrice) / avgPrice) * 100;
+        return {
+            id: `p${6 + i}`,
+            symbol: `${base[idx].symbol}${2 + Math.floor(i / 5)}`,
+            qty,
+            avgPrice,
+            ltp,
+            pnl: Number(pnl.toFixed(2)),
+            pnlPct: Number(pnlPct.toFixed(2))
+        };
+    })
 ];
