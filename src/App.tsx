@@ -1,10 +1,10 @@
 import { useState } from 'react';
 
 // Types
-import type { Position, Stock, Trade, Holding } from './types/stock.types';
+import type {Stock, Trade, Holding } from './types/stock.types';
 
 // Data
-import { holdings, positions, stocks, trades } from './data/stockData';
+import { holdings, stocks, trades } from './data/stockData';
 
 // Components
 import StockCard from './components/StockCard';
