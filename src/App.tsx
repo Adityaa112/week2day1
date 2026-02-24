@@ -104,6 +104,7 @@ function App() {
       <DataTable<Holding>
         data={holdings}
         rowKey='id'
+        filterKey='symbol' // search input filters by symbol
         columns={[
           { key: 'symbol', header: 'Symbol', sortable: true },
           { key: 'qty', header: 'Qty', sortable: true },
@@ -126,6 +127,7 @@ function App() {
       <DataTable<Position>
         data={positions}
         rowKey='id'
+        filterKey='symbol' // search input filters by symbol
         columns={[
           { key: 'symbol',   header: 'Symbol',    sortable: true },
           { key: 'qty',      header: 'Qty',       sortable: true },
