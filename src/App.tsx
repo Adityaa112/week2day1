@@ -1,118 +1,166 @@
-import { useState } from 'react';
 
-// Types
-import type {Stock, Trade, Holding } from './types/stock.types';
+// FILE: src/App.tsx
+// MODULE 2: Lazy Loading & Suspense
+//
+// WHAT CHANGED vs Module 1:
+//   - Added 'lazy' to the React import
+//   - 5 feature imports are now lazy() instead of static
+//   - Added SuspenseBoundary, TableSkeleton, CardGridSkeleton, FormSkeleton
+//   - Each feature is now wrapped in <SuspenseBoundary>
+//
+// WHAT DID NOT CHANGE:
+//   - All useState declarations
+//   - filteredStocks logic
+//   - handleNewTrade function
+//   - All prop values passed to features
+ 
+import { lazy, useState } from 'react';
+//                ^    ^
+//                |    useState — you already know this
+//                lazy — NEW: added to the import
 
-// Data
-import { holdings, stocks, trades } from './data/stockData';
+// ── Data imports (UNCHANGED) ─────────────────────────────────────────
+import { stocks, trades, positions, holdings } from './data/stockData';
+ 
+// ── Types (UNCHANGED) ────────────────────────────────────────────────
+import type { Stock, Trade } from './types/stock.types';
+ 
+// ── Boundary wrapper (EAGER import — NOT lazy) ───────────────────────
+import SuspenseBoundary from './boundaries/SuspenseBoundary';
+//
+// WHY NOT lazy? SuspenseBoundary SHOWS the skeleton while things load.
+// It needs to be ready instantly.
+ 
+// ── Skeleton components (EAGER imports — NOT lazy) ───────────────────
+import TableSkeleton    from './skeletons/TableSkeleton';
+import CardGridSkeleton from './skeletons/CardGridSkeleton';
+import FormSkeleton     from './skeletons/FormSkeleton';
+// WHY NOT lazy? These ARE the fallback UI.
+// They must exist BEFORE the real components arrive.
 
-// Components
-import StockCard from './components/StockCard';
-import PortfolioSummary from './components/PortfolioSummary';
-import SearchBar from './components/SearchBar';
-import DataTable from './components/DataTable';
-import TradeForm from './components/TradeForm';
-import TradeFeature from './features/trades/TradeFeature'; // NEW
-import LiveQuotesFeature from './features/quotes/LiveQuotesFeature'; // NEW
-import PositionsFeature from './features/positions/PositionsFeature'; // NEW
+// ── Feature components (LAZY — each becomes a separate chunk) ─────────
+ 
+const LiveQuotesFeature = lazy(function() {
+  return import('./features/quotes/LiveQuotesFeature');
+});
+ 
+const PortfolioFeature = lazy(function() {
+  return import('./features/portfolio/PortfolioFeature');
+});
+ 
+const PositionsFeature = lazy(function() {
+  return import('./features/positions/PositionsFeature');
+});
+ 
+const HoldingsFeature = lazy(function() {
+  return import('./features/holdings/HoldingsFeature');
+});
+ 
+const TradeFeature = lazy(function() {
+  return import('./features/trades/TradeFeature');
+});
+ 
+// After npm run build, Vite creates:
+//   LiveQuotesFeature-BxYz12.js
+//   PortfolioFeature-CdEf34.js
+//   PositionsFeature-GhIj56.js
+//   HoldingsFeature-KlMn78.js
+//   TradeFeature-OpQr90.js
 
+type NewTradeInput = Omit<Trade, 'id' | 'date'>;
+ 
 function App() {
-  const [selectedStock, setSelectedStock] = useState<Stock | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [sectorFilter, setSectorFilter] = useState('');
-  const [tradeHistory, setTradeHistory] = useState<Trade[]>(trades);
-
-  // Filter stocks based on search and sector
-  const filteredStocks = stocks.filter(s => {
-    const matchesSearch = s.symbol.toLowerCase().includes(searchQuery.toLowerCase())
-      || s.name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesSector = !sectorFilter || s.sector === sectorFilter;
-    return matchesSearch && matchesSector;
+ 
+  // ── State (COMPLETELY UNCHANGED from Module 1) ─────────────────────
+  const [selectedStock,  setSelectedStock]  = useState<Stock | null>(null);
+  const [searchQuery,    setSearchQuery]    = useState('');
+  const [sectorFilter,   setSectorFilter]   = useState('');
+  const [tradeHistory,   setTradeHistory]   = useState<Trade[]>(trades);
+ 
+  // ── Filtered stocks (UNCHANGED) ─────────────────────────────────────
+  var filteredStocks = stocks.filter(function(stock) {
+    var queryLower     = searchQuery.toLowerCase();
+    var symbolMatches  = stock.symbol.toLowerCase().includes(queryLower);
+    var nameMatches    = stock.name.toLowerCase().includes(queryLower);
+    var searchMatches  = symbolMatches || nameMatches;
+    var noFilter       = sectorFilter === '';
+    var sectorMatches  = noFilter || stock.sector === sectorFilter;
+    return searchMatches && sectorMatches;
   });
-
-  // Add a new trade
-  const handleNewTrade = (input: Omit<Trade, 'id' | 'date'>) => {
-    const newTrade: Trade = {
+ 
+  // ── handleNewTrade (UNCHANGED) ───────────────────────────────────────
+  function handleNewTrade(input: NewTradeInput): void {
+    var newTrade: Trade = {
       ...input,
-      id: `t${Date.now()}`,
+      id:   `t${Date.now()}`,
       date: new Date().toISOString().split('T')[0],
     };
-    setTradeHistory(prev => [newTrade, ...prev]);
-  };
-
+    setTradeHistory(function(previousTrades) {
+      return [newTrade, ...previousTrades];
+    });
+  }
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto', padding: 24, fontFamily: 'Arial, sans-serif' }}>
       <h1 style={{ color: '#1E3A8A' }}>Stock Market Dashboard</h1>
-
-      <SearchBar
-        onSearch={setSearchQuery}
-        onFilterChange={setSectorFilter}
-        placeholder='Search by symbol or name...'
-      />
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 16, marginBottom: 32 }}>
-        {filteredStocks.map(stock => (
-          <StockCard
-            key={stock.id}
-            stock={stock}
-            isSelected={selectedStock?.id === stock.id}
-            onSelect={setSelectedStock}
-          />
-        ))}
-      </div>
-
-      <PortfolioSummary availableStocks={stocks} />
-
-      {/* Live Quotes Feature with Virtual List */}
-      <LiveQuotesFeature
-        stocks={filteredStocks}
-        selectedStock={selectedStock}
-        onSelectStock={setSelectedStock}
-        onSearch={setSearchQuery}
-        onFilterChange={setSectorFilter}
-      />
-
-      {/* Trade History Feature with Infinite Scroll */}
-      <TradeFeature
-        tradeHistory={tradeHistory}
-        stocks={stocks}
-        selectedStock={selectedStock}
-        onSubmitTrade={handleNewTrade}
-      />
-
-      <h2 style={{ color: '#1E40AF' }}>Holdings</h2>
-      <DataTable<Holding>
-        data={holdings}
-        rowKey='id'
-        filterKey='symbol' // search input filters by symbol
-        columns={[
-          { key: 'symbol', header: 'Symbol', sortable: true },
-          { key: 'qty', header: 'Qty', sortable: true },
-          { key: 'investedValue', header: 'Invested Value', sortable: true,
-            render: v => `$${Number(v).toLocaleString()}` },
-          { key: 'currentValue', header: 'Current Value', sortable: true,
-            render: v => `$${Number(v).toLocaleString()}` },
-          { key: 'totalReturn', header: 'Total Return', sortable: true,
-            render: v => {
-              const n = Number(v);
-              return <span style={{ color: n >= 0 ? '#166534' : '#991B1B', fontWeight: 'bold' }}>
-                {n >= 0 ? '+' : ''}${n.toFixed(2)}
-              </span>;
-            }},
-        ]}
-      />
-
-      {/* POSITIONS TABLE - Infinite Scroll Feature */}
-      <PositionsFeature />
-
-      <h2 style={{ color: '#1E40AF' }}>New Trade</h2>
-      <TradeForm
-        stocks={stocks}
-        onSubmitTrade={handleNewTrade}
-        initialValues={selectedStock ?? {}}
-      />
+ 
+      {/* ── FEATURE 1: Live Quotes — uses BOTH skeletons ── */}
+      <SuspenseBoundary
+        fallback={
+          <>
+            <CardGridSkeleton count={filteredStocks.length || 3} />
+            <TableSkeleton rows={5} cols={6} title="Live Quotes" />
+          </>
+        }
+      >
+        <LiveQuotesFeature
+          stocks={filteredStocks}
+          selectedStock={selectedStock}
+          onSelectStock={setSelectedStock}
+          onSearch={setSearchQuery}
+          onFilterChange={setSectorFilter}
+        />
+      </SuspenseBoundary>
+ 
+      {/* ── FEATURE 2: Portfolio Summary ── */}
+      <SuspenseBoundary
+        fallback={<TableSkeleton rows={3} cols={3} title="Portfolio Summary" />}
+      >
+        <PortfolioFeature availableStocks={stocks} />
+      </SuspenseBoundary>
+ 
+      {/* ── FEATURE 3: Positions ── */}
+      <SuspenseBoundary
+        fallback={<TableSkeleton rows={5} cols={6} title="Positions" />}
+      >
+        <PositionsFeature positions={positions} />
+      </SuspenseBoundary>
+ 
+      {/* ── FEATURE 4: Holdings ── */}
+      <SuspenseBoundary
+        fallback={<TableSkeleton rows={5} cols={5} title="Holdings" />}
+      >
+        <HoldingsFeature holdings={holdings} />
+      </SuspenseBoundary>
+ 
+      {/* ── FEATURE 5: Trade History + Form — uses TWO skeletons ── */}
+      <SuspenseBoundary
+        fallback={
+          <>
+            <TableSkeleton rows={3} cols={5} title="Trade History" />
+            <FormSkeleton />
+          </>
+        }
+      >
+        <TradeFeature
+          tradeHistory={tradeHistory}
+          stocks={stocks}
+          selectedStock={selectedStock}
+          onSubmitTrade={handleNewTrade}
+        />
+      </SuspenseBoundary>
+ 
     </div>
   );
 }
-
+ 
 export default App;
