@@ -45,3 +45,16 @@ export interface Position {
   pnl: number;         // profit & loss in dollars
   pnlPct: number;      // profit & loss as a percentage
 }
+
+
+export interface AllocationSlice {
+  name: string;   // symbol
+  value: number;  // currentValue
+}
+
+export interface MarketTicker {
+  id: string;
+  name: string;
+  value: number;
+  changePct: number;
+}
