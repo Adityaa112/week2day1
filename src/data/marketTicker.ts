@@ -1,8 +1,8 @@
 import type { MarketTicker } from '../types/stock.types';
 
 export const marketTickers: MarketTicker[] = [
-  { id: '1', name: 'NIFTY 50', value: 22100.35, changePct: -0.32 },
-  { id: '2', name: 'NIFTY MIDCAP', value: 15933.05, changePct: -0.59 },
-  { id: '3', name: 'NIFTY IT', value: 30053.50, changePct: -4.74 },
-  { id: '4', name: 'SENSEX', value: 72890.25, changePct: 0.41 },
+  { id: '1', name: 'NASDAQ', value: 22863.68, changePct: 1.04 },
+  { id: '2', name: 'S&P 500', value: 6890.07, changePct: 0.77 },
+  { id: '3', name: 'NIFTY 50', value: 25564.00, changePct: 0.56 },
+  { id: '4', name: 'SENSEX', value: 82724.79, changePct: -0.61 },
 ];

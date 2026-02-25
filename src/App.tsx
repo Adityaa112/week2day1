@@ -37,6 +37,7 @@ import CardGridSkeleton from './skeletons/CardGridSkeleton';
 import FormSkeleton from './skeletons/FormSkeleton';
 import MarketTickerBar from './components/MarketTicker';
 import { marketTickers } from './data/marketTicker';
+import StockComparePanel from './components/StockComparePanel';
 // WHY NOT lazy? These ARE the fallback UI.
 // They must exist BEFORE the real components arrive.
 
@@ -171,7 +172,9 @@ function App() {
             onSubmitTrade={handleNewTrade}
           />
         </SuspenseBoundary>
+         <StockComparePanel />
       </div>
+     
     </>
   );
 
