@@ -1,62 +1,62 @@
 import React from 'react';
 import type { Trade, Stock } from '../../types/stock.types';
-import DataTable        from '../../components/DataTable';
-import TradeForm        from '../../components/TradeForm';
- 
-// Trade but WITHOUT id and date (the form user hasn't submitted yet)
+import DataTable from '../../components/DataTable';
+import TradeForm from '../../components/TradeForm';
+import { useTradeStore } from '../../stores/useTradeStore';
+
 type NewTradeInput = Omit<Trade, 'id' | 'date'>;
- 
+
 interface TradeFeatureProps {
-  tradeHistory:  Trade[];
-  stocks:        Stock[];
+  stocks: Stock[];
   selectedStock: Stock | null;
-  onSubmitTrade: (input: NewTradeInput) => void;
 }
- 
+
 const TradeFeature: React.FC<TradeFeatureProps> = ({
-  tradeHistory,
   stocks,
   selectedStock,
-  onSubmitTrade,
 }) => {
+  const tradeHistory = useTradeStore((s) => s.tradeHistory);
+  const addTrade = useTradeStore((s) => s.addTrade);
+
   return (
     <>
       <h2 style={{ color: '#1E40AF', marginTop: 32 }}>Trade History</h2>
+
       <DataTable<Trade>
         data={tradeHistory}
         rowKey="id"
         filterKey="symbol"
         columns={[
-          { key: 'symbol',   header: 'Symbol',  sortable: true },
-          { key: 'type',     header: 'Type',
-            render: function(value) {
-              // BUY = green text, SELL = red text
-              var isBuy   = value === 'BUY';
-              var colour  = isBuy ? '#166534' : '#991B1B';
+          { key: 'symbol', header: 'Symbol', sortable: true },
+          {
+            key: 'type',
+            header: 'Type',
+            render: (value) => {
+              const isBuy = value === 'BUY';
+              const colour = isBuy ? '#166534' : '#991B1B';
               return <strong style={{ color: colour }}>{String(value)}</strong>;
-            }
+            },
           },
-          { key: 'quantity', header: 'Qty',     sortable: true },
-          { key: 'price',    header: 'Price',   sortable: true,
-            render: function(value) { return '$' + Number(value).toFixed(2); }
+          { key: 'quantity', header: 'Qty', sortable: true },
+          {
+            key: 'price',
+            header: 'Price',
+            sortable: true,
+            render: (value) => '$' + Number(value).toFixed(2),
           },
-          { key: 'date',     header: 'Date',    sortable: true },
+          { key: 'date', header: 'Date', sortable: true },
         ]}
       />
 
       <h2 style={{ color: '#1E40AF', marginTop: 32 }}>Place a Trade</h2>
-      {/*
-        selectedStock ?? {} means:
-          selectedStock is not null  → use it to pre-fill the form
-          selectedStock IS null       → pass empty object (no pre-fill)
-      */}
+
       <TradeForm
         stocks={stocks}
-        onSubmitTrade={onSubmitTrade}
         initialValues={selectedStock ?? {}}
+        onSubmitTrade={(input: NewTradeInput) => addTrade(input)}
       />
     </>
   );
 };
- 
-export default TradeFeature;  // REQUIRED for React.lazy()
+
+export default TradeFeature; // REQUIRED for React.lazy()

@@ -94,26 +94,21 @@ export const trades: Trade[] = [
 ];
 
 export const holdings: Holding[] = [
-    {
-        id: 'h1', symbol: 'AAPL', qty: 10,
-        investedValue: 1750.00, currentValue: 1893.00, totalReturn: 143.00
-    },
-    {
-        id: 'h2', symbol: 'MSFT', qty: 5,
-        investedValue: 1800.00, currentValue: 1894.50, totalReturn: 94.50
-    },
-    {
-        id: 'h3', symbol: 'TSLA', qty: 8,
-        investedValue: 2120.00, currentValue: 1988.00, totalReturn: -132.00
-    },
-    {
-        id: 'h4', symbol: 'GOOGL', qty: 15,
-        investedValue: 2175.00, currentValue: 2127.00, totalReturn: -48.00
-    },
-    {
-        id: 'h5', symbol: 'JPM', qty: 20,
-        investedValue: 3840.00, currentValue: 3928.00, totalReturn: 88.00
-    },
+    { id: 'h1', symbol: 'AAPL', qty: 10, investedValue: 1750.00, currentValue: 1893.00, totalReturn: 143.00 },
+    { id: 'h2', symbol: 'MSFT', qty: 5, investedValue: 1800.00, currentValue: 1894.50, totalReturn: 94.50 },
+    { id: 'h3', symbol: 'TSLA', qty: 8, investedValue: 2120.00, currentValue: 1988.00, totalReturn: -132.00 },
+    { id: 'h4', symbol: 'GOOGL', qty: 15, investedValue: 2175.00, currentValue: 2127.00, totalReturn: -48.00 },
+    { id: 'h5', symbol: 'JPM', qty: 20, investedValue: 3840.00, currentValue: 3928.00, totalReturn: 88.00 },
+    { id: 'h6', symbol: 'AMZN', qty: 12, investedValue: 3400.00, currentValue: 3550.00, totalReturn: 150.00 },
+    { id: 'h7', symbol: 'NFLX', qty: 7, investedValue: 2800.00, currentValue: 2900.00, totalReturn: 100.00 },
+    { id: 'h8', symbol: 'NVDA', qty: 9, investedValue: 4000.00, currentValue: 4200.00, totalReturn: 200.00 },
+    { id: 'h9', symbol: 'META', qty: 6, investedValue: 1500.00, currentValue: 1600.00, totalReturn: 100.00 },
+    { id: 'h10', symbol: 'BABA', qty: 11, investedValue: 2200.00, currentValue: 2100.00, totalReturn: -100.00 },
+    { id: 'h11', symbol: 'ORCL', qty: 13, investedValue: 2600.00, currentValue: 2700.00, totalReturn: 100.00 },
+    { id: 'h12', symbol: 'INTC', qty: 14, investedValue: 1400.00, currentValue: 1350.00, totalReturn: -50.00 },
+    { id: 'h13', symbol: 'CSCO', qty: 16, investedValue: 3200.00, currentValue: 3300.00, totalReturn: 100.00 },
+    { id: 'h14', symbol: 'ADBE', qty: 4, investedValue: 2000.00, currentValue: 2100.00, totalReturn: 100.00 },
+    { id: 'h15', symbol: 'CRM', qty: 8, investedValue: 1600.00, currentValue: 1700.00, totalReturn: 100.00 },
 ];
 
 export const positions: Position[] = [
@@ -167,4 +162,6 @@ export const positions: Position[] = [
             pnlPct: Number(pnlPct.toFixed(2))
         };
     })
+
+    
 ];

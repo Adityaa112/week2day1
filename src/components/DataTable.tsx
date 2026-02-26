@@ -1,20 +1,21 @@
-import React, { useState } from "react";
+// src/components/DataTable.tsx
+import React, { useState } from 'react';
 
 interface Column<T> {
   key: keyof T;
   header: string;
   render?: (value: T[keyof T], row: T) => React.ReactNode;
   width?: number;
-  sortable?: boolean; // NEW — opt-in per column
+  sortable?: boolean;
 }
 
 interface DataTableProps<T extends object> {
-  data: T[];
+  data?: T[]; // ✅ optional
   columns: Column<T>[];
   rowKey: keyof T;
   onRowClick?: (row: T) => void;
   emptyMessage?: string;
-  filterKey?: keyof T;    // NEW — which field to filter on
+  filterKey?: keyof T;
 }
 
 type SortDir = 'asc' | 'desc' | null;
@@ -24,29 +25,29 @@ interface SortState<T> {
   dir: SortDir;
 }
 
-function DataTable<T extends object>({ 
-  data, 
-  columns, 
-  rowKey, 
-  onRowClick, 
-  emptyMessage = "No data available",
-  filterKey
+function DataTable<T extends object>({
+  data,
+  columns,
+  rowKey,
+  onRowClick,
+  emptyMessage = 'No data available',
+  filterKey,
 }: DataTableProps<T>) {
-  // State to track current sorting
+
+  // ✅ HARD SAFETY NET
+  const safeData: T[] = Array.isArray(data) ? data : [];
+
   const [sort, setSort] = useState<SortState<T>>({ key: null, dir: null });
-  // State for filter text
   const [filterText, setFilterText] = useState('');
 
-  // Toggle logic: asc -> desc -> asc
   const handleSort = (key: keyof T) => {
-    setSort(prev => ({
+    setSort((prev) => ({
       key,
       dir: prev.key === key && prev.dir === 'asc' ? 'desc' : 'asc',
     }));
   };
 
-  // Sort logic: Returns a new array to keep the original data pure
-  const sorted = [...data].sort((a, b) => {
+  const sorted = [...safeData].sort((a, b) => {
     if (!sort.key || !sort.dir) return 0;
     const av = a[sort.key];
     const bv = b[sort.key];
@@ -55,14 +56,21 @@ function DataTable<T extends object>({
     return 0;
   });
 
-  // Filter logic: apply filter BEFORE rendering
-  const filtered = filterKey && filterText
-    ? sorted.filter(row =>
-        String(row[filterKey]).toLowerCase().includes(filterText.toLowerCase()))
-    : sorted;
+  const filtered =
+    filterKey && filterText
+      ? sorted.filter((row) =>
+          String(row[filterKey])
+            .toLowerCase()
+            .includes(filterText.toLowerCase())
+        )
+      : sorted;
 
-  if (data.length === 0) {
-    return <p style={{ textAlign: 'center', padding: '20px' }}>{emptyMessage}</p>;
+  if (safeData.length === 0) {
+    return (
+      <p style={{ textAlign: 'center', padding: '20px' }}>
+        {emptyMessage}
+      </p>
+    );
   }
 
   return (
@@ -70,15 +78,21 @@ function DataTable<T extends object>({
       {filterKey && (
         <div style={{ marginBottom: 8 }}>
           <input
-            type='text'
+            type="text"
             placeholder={`Filter by ${String(filterKey)}...`}
             value={filterText}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setFilterText(e.target.value)}
-            style={{ padding: '6px 10px', borderRadius: 4, border: '1px solid #D1D5DB', width: 220 }}
+            onChange={(e) => setFilterText(e.target.value)}
+            style={{
+              padding: '6px 10px',
+              borderRadius: 4,
+              border: '1px solid #D1D5DB',
+              width: 220,
+            }}
           />
         </div>
       )}
-      <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '2rem' }}>
+
+      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
         <thead>
           <tr>
             {columns.map((col) => (
@@ -92,15 +106,15 @@ function DataTable<T extends object>({
                   background: '#1E3A8A',
                   color: '#fff',
                   userSelect: 'none',
-                  width: col.width,
                 }}
               >
                 {col.header}
-                {/* Visual feedback for sorting */}
                 {col.sortable && (
-                  <span style={{ marginLeft: '8px', opacity: sort.key === col.key ? 1 : 0.3 }}>
-                    {sort.key === col.key 
-                      ? (sort.dir === 'asc' ? '▲' : '▼') 
+                  <span style={{ marginLeft: 8 }}>
+                    {sort.key === col.key
+                      ? sort.dir === 'asc'
+                        ? '▲'
+                        : '▼'
                       : '⇅'}
                   </span>
                 )}
@@ -115,15 +129,15 @@ function DataTable<T extends object>({
               key={String(row[rowKey])}
               onClick={() => onRowClick?.(row)}
               style={{
-                background: ri % 2 === 0 ? '#fff' : '#F8fAFC',
+                background: ri % 2 === 0 ? '#fff' : '#F8FAFC',
                 cursor: onRowClick ? 'pointer' : 'default',
-                borderBottom: '1px solid #e2e8f0'
+                borderBottom: '1px solid #e2e8f0',
               }}
             >
               {columns.map((column) => (
-                <td key={String(column.key)} style={{ padding: '10px' }}>
-                  {column.render 
-                    ? column.render(row[column.key], row) 
+                <td key={String(column.key)} style={{ padding: 10 }}>
+                  {column.render
+                    ? column.render(row[column.key], row)
                     : String(row[column.key])}
                 </td>
               ))}

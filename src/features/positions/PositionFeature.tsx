@@ -4,7 +4,7 @@ import DataTable from '../../components/DataTable';
 import { usePositionsStore } from '../../stores/usePositionStore';
 
 const PositionsFeature: React.FC = () => {
-  const { positions, togglePositionCompare, comparePositions } =
+  const { positions, togglePositionCompare, comparePositions, addPosition, removePosition } =
     usePositionsStore();
 
   return (
@@ -20,10 +20,7 @@ const PositionsFeature: React.FC = () => {
             key: 'compare' as any,
             header: 'Compare',
             render: (_, pos) => {
-              const inCompare = comparePositions.some(
-                (p) => p.id === pos.id
-              );
-
+              const inCompare = comparePositions.some((p) => p.id === pos.id);
               return (
                 <button
                   onClick={() => togglePositionCompare(pos)}
@@ -60,6 +57,26 @@ const PositionsFeature: React.FC = () => {
               >
                 {Number(v) >= 0 ? '+' : ''}${Number(v).toFixed(2)}
               </span>
+            ),
+          },
+          {
+            key: 'actions',
+            header: 'Actions',
+            render: (_, pos) => (
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button
+                  onClick={() => addPosition({ symbol: pos.symbol, qty: 1, avgPrice: pos.avgPrice + pos.avgPrice*0.05, ltp: pos.ltp, pnl: pos.pnl, pnlPct: pos.pnlPct })}
+                  style={{ background: '#E0F2FE', color: '#0369A1', border: 'none', borderRadius: 4, padding: '4px 10px', cursor: 'pointer' }}
+                >
+                  Add 
+                </button>
+                <button
+                  onClick={() => removePosition(pos.id)}
+                  style={{ background: '#FECACA', color: '#B91C1C', border: 'none', borderRadius: 4, padding: '4px 10px', cursor: 'pointer' }}
+                >
+                  Delete
+                </button>
+              </div>
             ),
           },
         ]}
