@@ -3,10 +3,7 @@ import type { Holding, AllocationSlice } from '../../types/stock.types';
 
 import DataTable from '../../components/DataTable';
 import PortfolioAllocationPie from '../../components/PortfolioAllocationPie';
-
-interface HoldingsFeatureProps {
-  holdings: Holding[];
-}
+import { useHoldingsStore } from '../../stores/useHoldingStore';
 
 function pnlCell(value: unknown): React.ReactNode {
   const numberValue = Number(value);
@@ -21,19 +18,21 @@ function pnlCell(value: unknown): React.ReactNode {
   );
 }
 
-const HoldingsFeature: React.FC<HoldingsFeatureProps> = ({ holdings }) => {
+const HoldingsFeature: React.FC = () => {
+  // 🔹 Zustand is now the single source of truth
+  const { holdings, compareHoldings, toggleHoldingCompare } =
+    useHoldingsStore();
 
-  // 🔹 Chart data from holdings
+  // Used by the portfolio allocation pie
   const allocationData: AllocationSlice[] = holdings.map((h) => ({
     name: h.symbol,
     value: h.currentValue,
   }));
 
   return (
-    <>
+    <div style={{ marginBottom: 40 }}>
       <h2 style={{ color: '#1E40AF' }}>Holdings</h2>
 
-      {/* 🔸 Chart + Table Container */}
       <div
         style={{
           display: 'flex',
@@ -42,7 +41,7 @@ const HoldingsFeature: React.FC<HoldingsFeatureProps> = ({ holdings }) => {
           marginBottom: '32px',
         }}
       >
-        {/* Pie Chart */}
+        {/* Allocation Pie */}
         <div style={{ flex: '0 0 360px' }}>
           <h3>Portfolio Allocation</h3>
           <PortfolioAllocationPie data={allocationData} />
@@ -55,31 +54,63 @@ const HoldingsFeature: React.FC<HoldingsFeatureProps> = ({ holdings }) => {
             rowKey="id"
             filterKey="symbol"
             columns={[
-              { key: 'symbol', header: 'Symbol', sortable: true },
+              // 🆕 Compare column
+              {
+                key: 'compare' as any,
+                header: 'Compare',
+                render: (_, holding) => {
+                  const inCompare = compareHoldings.some(
+                    (h) => h.id === holding.id
+                  );
+
+                  return (
+                    <button
+                      onClick={() => toggleHoldingCompare(holding)}
+                      style={{
+                        background: inCompare ? '#10B981' : '#E5E7EB',
+                        color: inCompare ? '#fff' : '#374151',
+                        border: 'none',
+                        borderRadius: 4,
+                        padding: '4px 10px',
+                        cursor: 'pointer',
+                      }}
+                    >
+                      {inCompare ? '✓' : '+'}
+                    </button>
+                  );
+                },
+              },
+
+              {
+                key: 'symbol',
+                header: 'Symbol',
+                sortable: true,
+                render: (value) => <strong>{value}</strong>,
+              },
               { key: 'qty', header: 'Qty', sortable: true },
               {
                 key: 'investedValue',
                 header: 'Invested Value',
                 sortable: true,
-                render: (value) => '$' + Number(value).toLocaleString(),
+                render: (val) => '$' + Number(val).toLocaleString(),
               },
               {
                 key: 'currentValue',
                 header: 'Current Value',
                 sortable: true,
-                render: (value) => '$' + Number(value).toLocaleString(),
+                render: (val) => '$' + Number(val).toLocaleString(),
               },
               {
                 key: 'totalReturn',
                 header: 'Total Return',
                 sortable: true,
-                render: (value) => pnlCell(value),
+                render: (val) => pnlCell(val),
               },
             ]}
           />
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
